@@ -1,0 +1,25 @@
+name: alphaconsultantbot
+
+services:
+  bot:
+    build: .
+    env_file: .env
+    environment:
+      DATA_DIR: /data
+    volumes:
+      - ./data:/data
+    network_mode: host     # изза этого могут быть проблемы на чем то кроме линукса, тестировалось на нем
+    restart: unless-stopped
+
+  # запускается только с docker compose --profile local-llm up
+  ollama:
+    image: ollama/ollama:latest
+    profiles: ["local-llm"]
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    restart: unless-stopped
+
+volumes:
+  ollama_models:
